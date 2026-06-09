@@ -4,14 +4,14 @@
 >
 > **Designed for software and technology projects** — apps, APIs, modules, platforms, integrations. The AI detects the tech stack from your description and generates implementation-specific tasks.
 
-**Stack:** React 18 · FastAPI · PostgreSQL · Groq (llama-3.3-70b-versatile)
+**Stack:** React 18 · FastAPI · PostgreSQL · Groq (openai/gpt-oss-120b)
 
 ---
 
 ## What it does
 
 1. **Describe your project** in plain text — no templates, no structure needed
-2. **AI runs a 6-stage pipeline** to understand, plan, generate, critique, repair, and finalize your project structure
+2. **AI analyzes, generates, and self-reviews** your project structure in one pass
 3. **Review the output** — user stories with acceptance criteria, tasks with effort sizing and confidence scores
 4. **Export with one click** — CSV, JSON, or Markdown, ready to import into your PM tool
 
@@ -36,18 +36,15 @@
 
 ## The AI pipeline
 
-Every generation runs through 6 explicit stages powered by `llama-3.3-70b-versatile` on Groq:
+Every generation runs through 3 stages powered by `openai/gpt-oss-120b` on Groq:
 
 ```
-Stage 1 — UNDERSTANDING    Extracts intent, features, platform hints, and ambiguities
-Stage 2 — PLANNING         Designs the story structure and execution order with rationale
-Stage 3 — GENERATION       Produces the full structured output (stories + tasks)
-Stage 4 — CRITIQUE         A senior-engineer persona reviews for vague tasks, order violations, missing foundational work
-Stage 5 — REPAIR           Applies targeted fixes to issues flagged in the critique (skipped if quality is "good")
-Stage 6 — FINAL OUTPUT     Extracts the canonical result from <repaired> or <generation>
+Stage 1 — ANALYZE          Detects tech stack, validates that the input is a software project
+Stage 2 — GENERATE         Produces the full structured output (stories + tasks) using stack-specific vocabulary
+Stage 3 — REVIEW & FINALIZE  Self-reviews for generic titles, missing tasks, wrong order, then emits <final>
 ```
 
-Each stage emits a tagged XML block (`<understanding>`, `<plan>`, `<generation>`, `<critique>`, `<repaired>`, `<final>`) that is passed forward — the model cannot skip stages or produce final output early.
+`openai/gpt-oss-120b` is a reasoning model — it applies chain-of-thought internally without needing explicit intermediate outputs. The pipeline is designed to stay well within Groq's free-tier token limit (8000 TPM) even for the maximum allowed description length.
 
 ### Self-healing retry
 
@@ -78,7 +75,7 @@ Each generated task includes:
 | Frontend | React 18 + TypeScript + Vite + Tailwind CSS + Zustand |
 | Backend | FastAPI 0.110 + SQLAlchemy 2 + Alembic |
 | Database | PostgreSQL 16 |
-| AI | Groq API — `llama-3.3-70b-versatile` |
+| AI | Groq API — `openai/gpt-oss-120b` |
 | Auth | JWT (9-hour access tokens) + Bcrypt |
 | Rate limiting | SlowAPI — 3 generations / hour per user |
 | Email | Resend (forgot-password flow) |
@@ -93,7 +90,7 @@ Each generated task includes:
 - Docker + Docker Compose
 - A free [Groq API key](https://console.groq.com/keys)
 
-> **Note on the free Groq tier:** the free tier has a generous token-per-minute quota for testing but a strict daily limit. For sustained use or teams, users should supply their own Groq API key in account settings.
+> **Note on the free Groq tier:** the free tier limit for `openai/gpt-oss-120b` is 8000 tokens per minute. Structify's prompt is designed to stay well under this limit — the worst case (5000-character description + max output) uses ~5700 tokens. For sustained use or teams, users should supply their own Groq API key in account settings to bypass the shared rate limit entirely.
 
 ### 1. Clone & configure
 
@@ -157,11 +154,12 @@ npm run dev
 
 ## Features
 
-- **6-stage AI pipeline** with structured XML-tagged intermediate outputs and self-healing retry
+- **3-stage AI pipeline** (Analyze → Generate → Review & Finalize) powered by `openai/gpt-oss-120b`
 - **Two generation modes:** agile User Stories + Tasks, or flat task list
 - **Per-task effort sizing** (S/M/L + hour ranges) and confidence scores
-- **Critique & repair loop** — the model reviews its own output before returning it
+- **Self-review built in** — model verifies its own output for generic titles, wrong order, and missing tasks before returning
 - **In-memory response cache** — 10-minute TTL, SHA-256 keyed by description + mode
+- **Quota counter** — users see remaining generations in real time; turns amber at 1 left, red at 0
 - **Multi-language output** — AI detects input language and generates in the same language
 - **Three export formats** — CSV, JSON, Markdown — one click, no reformatting
 - **Add Feature** — describe a new feature, AI appends stories and tasks to an existing project
@@ -214,6 +212,7 @@ structify/
 | PATCH | `/auth/users/me` | Update Groq API key |
 | DELETE | `/auth/users/me` | Delete account + all data |
 | POST | `/generate` | Run AI pipeline (rate-limited) |
+| GET | `/generate/quota` | Get remaining generations for current user |
 | GET | `/projects` | List user projects |
 | POST | `/projects` | Save a generated project |
 | GET | `/projects/{id}` | Get project with stories and tasks |
