@@ -25,6 +25,8 @@ export function useGenerate() {
         if (status === 429 && detail.startsWith('RATE_LIMIT::')) {
           const waitTime = detail.replace('RATE_LIMIT::', '')
           store.setRateLimit(waitTime)
+        } else if (status === 400 && detail.startsWith('NOT_A_PROJECT::')) {
+          store.setError(detail.replace('NOT_A_PROJECT::', ''))
         } else {
           store.setError(detail || 'Generation failed. Please try again.')
         }

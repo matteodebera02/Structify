@@ -19,13 +19,18 @@ export default function GenerateForm({ onGenerate, loading }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <textarea
-        value={description}
-        onChange={e => setDescription(e.target.value)}
-        placeholder="Describe your project or idea in plain language..."
-        rows={5}
-        className="w-full px-4 py-3 text-sm bg-base-surface border border-base-border rounded-lg outline-none placeholder:text-base-muted focus:border-pink-primary transition-colors resize-none font-sans"
-      />
+      <div className="flex flex-col gap-1.5">
+        <textarea
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          placeholder="Describe the software or tech product you want to build — app, API, module, platform, integration..."
+          rows={5}
+          className="w-full px-4 py-3 text-sm bg-base-surface border border-base-border rounded-lg outline-none placeholder:text-base-muted focus:border-pink-primary transition-colors resize-none font-sans"
+        />
+        <p className="text-[11px] text-base-muted">
+          Structify generates plans for software and technology projects. The more context you give (stack, team, scope), the more specific the output.
+        </p>
+      </div>
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-2 bg-base-surface border border-base-border rounded-md p-1">
           {(['us_and_tasks', 'tasks_only'] as OutputMode[]).map(m => (

@@ -1,6 +1,8 @@
 # Structify — From idea to project plan, in seconds.
 
-> Describe what you're building in plain language. Structify uses AI to generate structured user stories and tasks — ready to export into your PM tools.
+> Describe the software or tech product you want to build. Structify uses AI to generate structured user stories and tasks — ready to export into your PM tools.
+>
+> **Designed for software and technology projects** — apps, APIs, modules, platforms, integrations. The AI detects the tech stack from your description and generates implementation-specific tasks.
 
 **Stack:** React 18 · FastAPI · PostgreSQL · Groq (llama-3.3-70b-versatile)
 
@@ -22,11 +24,13 @@
 
 ### Export formats
 
-| Format | Compatible tools |
-|--------|-----------------|
-| **CSV** | Linear, Notion, ClickUp, Asana, Jira, Trello, Google Sheets |
-| **JSON** | Custom scripts, n8n, Zapier, GitHub Actions, REST pipelines |
-| **Markdown** | Notion, GitHub, Obsidian, Confluence, Logseq |
+| Format | Works with |
+|--------|-----------|
+| **CSV** | Google Sheets (direct), Notion (direct), Linear / ClickUp / Asana / Jira (column mapping required on import) |
+| **JSON** | n8n, Zapier, GitHub Actions, custom scripts — any tool that consumes JSON |
+| **Markdown** | GitHub, Obsidian, Logseq (native rendering), Notion (via import), Confluence |
+
+> CSV columns: Name, Description, Type, User Story, Order, Effort, Effort Hours Min/Max, Priority, Status, Tags. Tools like Linear and Asana use different column names and will ask you to map them during import.
 
 ---
 

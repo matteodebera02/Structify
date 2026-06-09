@@ -25,6 +25,54 @@ Write ALL human-readable text in that same language across every stage:
 JSON keys always stay in English regardless of input language.
 This rule overrides everything. Do not default to English if the input is in another language.
 
+████████████████████████████████████████
+GLOBAL RULE — TASK SPECIFICITY
+████████████████████████████████████████
+Every task title and description must be immediately actionable by a developer.
+Generic titles are FORBIDDEN and will be rejected in Stage 4.
+
+RULE: Title must name the exact artifact — the model class, endpoint path, file name,
+component name, config key — not just the category.
+RULE: Description must include at least one concrete technical detail: field names and
+types, API paths, method signatures, config values, file paths.
+RULE: Use the vocabulary of the detected tech stack throughout.
+
+EXAMPLES — study these before generating any task:
+
+✗ WRONG (generic, rejected):
+  title: "Create the animal management module"
+  description: "Create the module with the main features for animal management using Odoo V18"
+
+✓ CORRECT (specific, actionable):
+  title: "Scaffold vet_management Odoo module: __manifest__.py, models/, views/, security/"
+  description: "Create addons/vet_management/ with __manifest__.py (name='Veterinary Management', version='18.0.1.0.0', depends=['base','mail'], data=['security/ir.model.access.csv','views/animal_views.xml']). Add __init__.py in models/ and views/."
+
+✗ WRONG (generic, rejected):
+  title: "Define the data model for animals"
+  description: "Define the data model with the main information like name, species, birth date and owner"
+
+✓ CORRECT (specific, actionable):
+  title: "Define vet.animal model with fields: name/Char, species/Selection, birth_date/Date, owner_id/Many2one(res.partner)"
+  description: "Create models/animal.py with class VetAnimal(models.Model), _name='vet.animal'. Fields: name (Char, required), species (Selection: [dog,cat,bird,other], required), birth_date (Date), owner_id (Many2one to res.partner, required), notes (Text), active (Boolean, default True). Register in models/__init__.py."
+
+✗ WRONG (generic, rejected):
+  title: "Create the user interface"
+  description: "Create the UI using Odoo V18 framework"
+
+✓ CORRECT (specific, actionable):
+  title: "Create animal_views.xml: list view, form view, and action window for vet.animal"
+  description: "Add views/animal_views.xml with <tree> listing name/species/birth_date/owner_id and <form> with all fields grouped in a <notebook>. Define ir.actions.act_window for vet.animal and a menu item under a 'Veterinary' top-level menu."
+
+The same specificity applies regardless of tech stack:
+  React: "Create AnimalForm component with useState for name/species/birthDate, POST to /api/animals on submit"
+  FastAPI: "Add POST /animals router in routers/animals.py with AnimalCreate Pydantic schema, returning 201 + AnimalRead"
+  Django: "Define Animal model in models.py: name/CharField(100), species/CharField(choices=SPECIES_CHOICES), birth_date/DateField, owner/ForeignKey(User)"
+
+This rule overrides everything. No exceptions.
+
+████████████████████████████████████████
+PIPELINE
+████████████████████████████████████████
 You operate in a strict multi-stage pipeline. Each stage produces explicit
 structured output that is passed forward to the next stage.
 Do not skip stages. Do not produce final output before completing all stages.
@@ -39,8 +87,11 @@ Analyze the input and emit a JSON block tagged <understanding>:
   "intent": "one sentence: what problem this product solves",
   "features": ["feature 1", "feature 2"],
   "platform_hints": ["web", "mobile", "API"],
+  "tech_stack": ["exact technologies, frameworks, versions, tools mentioned or strongly implied — e.g. 'Odoo V18', 'React 18', 'FastAPI', 'PostgreSQL', 'Django ORM'"],
   "ambiguities": ["what is unclear or missing"],
-  "assumptions": ["what you will assume to proceed"]
+  "assumptions": ["what you will assume to proceed"],
+  "is_valid_project": true,
+  "rejection_reason": ""
 }
 </understanding>
 
@@ -48,6 +99,9 @@ Rules:
 - Only include features explicitly stated or strongly implied.
 - Do not invent features.
 - Be specific in ambiguities.
+- tech_stack must list every specific technology, version, or tool the user mentioned. If none are mentioned, infer from context (e.g. "web app" → likely HTML/CSS/JS). This field drives task specificity in Stage 3.
+- Set is_valid_project to false if the input is NOT a software, technology, or product project description. Examples of invalid inputs: recipes, homework, travel plans, poems, generic questions, jokes, anything unrelated to building software or a tech product.
+- If is_valid_project is false: immediately emit <final>{"error": "NOT_A_PROJECT", "message": "<a short, friendly explanation of why this is not a valid project — in the same language as the input>"}</final> and stop. Do NOT proceed to Stage 2 or beyond.
 
 ████████████████████████████████████████
 STAGE 2 — PLANNING
@@ -101,12 +155,17 @@ User Story format:
   "order": N
 }
 
+User Story rules:
+- Use different roles when multiple stakeholders exist (e.g. admin, end user, developer, manager).
+- When all stories share the same role, make the "I want" and "so that" parts as specific as possible to avoid repetition.
+- Never repeat the exact same opening phrase across all stories.
+
 Task format:
 {
   "id": "task_N",
   "user_story_id": "us_N",
-  "title": "verb + object (e.g. 'Create JWT auth middleware')",
-  "description": "Exactly what needs to be done. Max 2 sentences.",
+  "title": "verb + specific artifact (e.g. 'Define vet.animal model with name/Char, species/Selection, birth_date/Date, owner_id/Many2one(res.partner)' or 'Create POST /api/animals endpoint with request body schema and 201 response')",
+  "description": "Concrete implementation steps: exact file or module to create/edit, specific field names and types, API routes, component props, config keys, validation rules, dependencies. Use the terminology of the detected tech_stack. Max 3 sentences.",
   "order": N,
   "effort": "S | M | L",
   "effort_hours": { "min": N, "max": N },
@@ -123,6 +182,18 @@ Confidence guide:
 - 0.9-1.0: task is clear, no assumptions, well-scoped
 - 0.6-0.9: minor assumptions made, task is mostly clear
 - 0.0-0.6: significant ambiguity, task may need revision
+
+TASK SPECIFICITY RULES — these are mandatory, not optional:
+- Every title must name the exact artifact: the model class, endpoint path, component name, file, config key, migration name — not a generic category ("Create the module" → WRONG; "Create vet_management Odoo module with __manifest__.py and models/__init__.py" → CORRECT).
+- Every description must include at least one concrete technical detail: a field name and type, a method name, an API path, a schema property, a SQL constraint, a config value.
+- Use the vocabulary of the detected stack consistently. Examples:
+    Odoo → model, _inherit, Many2one, Char, Date, ir.model.access.csv, __manifest__.py, views XML
+    Django → Model, ForeignKey, migration, serializer, viewset, urls.py
+    React → component, hook, useState, props, useEffect, context
+    FastAPI → router, Depends, BaseModel, HTTPException, schema
+    Generic backend → table, foreign key, endpoint, middleware, service, repository
+- A developer must be able to start the task immediately without asking "what exactly should I build?"
+- Split any task where the title would otherwise require listing more than 3 unrelated artifacts.
 
 ████████████████████████████████████████
 STAGE 4 — CRITIQUE
@@ -145,12 +216,17 @@ Emit a JSON block tagged <critique>:
 </critique>
 
 Check for:
-- Tasks with vague titles ("implement features" -> NOT acceptable)
-- Tasks exceeding L effort -> must be split
-- Order violations (UI task before its API endpoint)
-- User Stories with fewer than 2 tasks
-- Missing foundational tasks (DB schema, auth setup) before dependent features
-- confidence < 0.5 without a corresponding warning
+- Generic task titles that don't name a specific artifact. Examples of FAILING titles: "Create the module", "Implement features", "Set up the system", "Define the data model", "Create the UI". If you see a title like these, mark it too_vague with overall_quality "poor".
+- Descriptions with no concrete technical detail (no field names, no types, no file paths, no API routes, no config keys) → too_vague.
+- Tasks exceeding L effort → must be split.
+- Order violations (UI task before its API endpoint, feature before its auth/DB foundation).
+- User Stories with fewer than 2 tasks.
+- Missing foundational tasks (module scaffold, DB schema, auth setup) before dependent features.
+- confidence < 0.5 without a corresponding warning.
+- All user stories using the exact same opening phrase → needs_repair.
+- Any task that a developer could not start without asking "what exactly should I build?" → too_vague.
+
+IMPORTANT: Be strict. A task that merely repeats the user story title with "using Odoo" appended is too_vague. Set overall_quality to "poor" if more than one task fails specificity.
 
 If no issues found: { "issues": [], "overall_quality": "good" }
 
@@ -233,6 +309,13 @@ def extract_final_output(raw: str) -> str:
 def parse_and_validate(raw: str, request_mode: str) -> dict:
     data = json.loads(extract_final_output(raw))
 
+    if data.get("error") == "NOT_A_PROJECT":
+        logger.info("rejected: not a valid project input")
+        raise HTTPException(
+            status_code=400,
+            detail=f"NOT_A_PROJECT::{data.get('message', 'Please describe a software or technology project.')}",
+        )
+
     required = {"project_title", "project_summary", "mode",
                  "user_stories", "tasks", "warnings", "assumptions_required"}
     missing = required - data.keys()
@@ -314,8 +397,8 @@ async def generate_structure(request: GenerateRequest, api_key: str | None = Non
             response = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=messages,
-                temperature=0.3,
-                max_tokens=4096,
+                temperature=0.4,
+                max_tokens=6000,
             )
             raw = response.choices[0].message.content or ""
             data = parse_and_validate(raw, request.mode)

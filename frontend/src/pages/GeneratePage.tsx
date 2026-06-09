@@ -9,6 +9,7 @@ import RateLimitBanner from '@/components/generate/RateLimitBanner'
 import { useGenerate } from '@/hooks/useGenerate'
 import { useGenerateStore } from '@/store/generateStore'
 import { useProjects } from '@/hooks/useProjects'
+import { generateApi, type QuotaInfo } from '@/api/generateApi'
 import type { OutputMode } from '@/types/models'
 
 export default function GeneratePage() {
@@ -16,6 +17,18 @@ export default function GeneratePage() {
   const { generate, result, description, mode, isLoading, error, rateLimit, reset } = useGenerate()
   const { createProject } = useProjects()
   const [saving, setSaving] = useState(false)
+  const [quota, setQuota] = useState<QuotaInfo | null>(null)
+
+  const fetchQuota = async () => {
+    try {
+      const q = await generateApi.getQuota()
+      setQuota(q)
+    } catch {
+      // non-critical
+    }
+  }
+
+  useEffect(() => { fetchQuota() }, [])
 
   // Auto-trigger if user came from the pre-auth flow with a saved description
   useEffect(() => {
@@ -32,7 +45,7 @@ export default function GeneratePage() {
   }, [reset])
 
   const handleGenerate = (desc: string, m: OutputMode) => {
-    generate({ description: desc, mode: m })
+    generate({ description: desc, mode: m }).then(() => fetchQuota())
   }
 
   const handleSave = async () => {
@@ -62,14 +75,32 @@ export default function GeneratePage() {
 
         {/* Header */}
         <div className="mb-8">
-          <p className="text-xs font-semibold text-pink-primary uppercase tracking-widest mb-2">
-            New project
-          </p>
+          <div className="flex items-start justify-between gap-4 mb-2">
+            <p className="text-xs font-semibold text-pink-primary uppercase tracking-widest">
+              New project
+            </p>
+            {quota && !quota.own_key && quota.remaining !== null && (
+              <span className={`text-xs font-medium px-2.5 py-1 rounded-full border flex-shrink-0 ${
+                quota.remaining === 0
+                  ? 'bg-red-50 border-red-200 text-red-600'
+                  : quota.remaining === 1
+                  ? 'bg-amber-50 border-amber-200 text-amber-700'
+                  : 'bg-base-surface border-base-border text-base-muted'
+              }`}>
+                {quota.remaining} of {quota.limit} generations left this hour
+              </span>
+            )}
+            {quota?.own_key && (
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full border bg-green-50 border-green-200 text-green-700 flex-shrink-0">
+                Unlimited — own API key
+              </span>
+            )}
+          </div>
           <h1 className="text-2xl font-semibold text-base-black tracking-tight mb-2">
             Describe your project
           </h1>
           <p className="text-sm text-base-muted">
-            Write a brief description and Structify will generate user stories and tasks ready to execute.
+            Describe a software or tech product and Structify will generate user stories and tasks ready to execute.
           </p>
         </div>
 

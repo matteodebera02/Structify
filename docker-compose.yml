@@ -25,7 +25,6 @@ services:
       - ./backend/.env
     environment:
       DATABASE_URL: postgresql://structify:structify@db:5432/structify
-      SECRET_KEY: dev-secret-key-change-in-prod
     depends_on:
       db:
         condition: service_healthy
