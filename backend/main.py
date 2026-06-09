@@ -1,0 +1,64 @@
+import logging
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+
+from sqlalchemy import text
+
+from app.db.session import engine
+from app.models.base import Base
+from app.routers import auth, generate, projects, tasks, export
+from app.routers.generate import limiter
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    with engine.connect() as conn:
+        conn.execute(text(
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS groq_api_key VARCHAR(255)"
+        ))
+        conn.commit()
+    logger.info("startup complete")
+    yield
+
+
+app = FastAPI(
+    title="Structify API",
+    description="Transform project descriptions into structured User Stories and Tasks",
+    version="2.2.0",
+    lifespan=lifespan,
+)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "https://structify.vercel.app"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(generate.router, prefix="", tags=["generate"])
+app.include_router(projects.router, prefix="/projects", tags=["projects"])
+app.include_router(tasks.router, prefix="/tasks", tags=["tasks"])
+app.include_router(export.router, prefix="/projects", tags=["export"])
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "version": "2.2.0"}
