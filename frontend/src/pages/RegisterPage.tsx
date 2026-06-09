@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -114,6 +115,21 @@ export default function RegisterPage() {
             />
           </div>
 
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={privacyAccepted}
+              onChange={e => setPrivacyAccepted(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-base-border accent-pink-primary cursor-pointer"
+            />
+            <span className="text-[11px] text-base-muted leading-relaxed">
+              I have read and accept the{' '}
+              <Link to="/privacy" className="text-pink-primary hover:underline" target="_blank">
+                Privacy Policy
+              </Link>
+            </span>
+          </label>
+
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
               <p className="text-xs text-red-600">{error}</p>
@@ -124,15 +140,10 @@ export default function RegisterPage() {
             type="submit"
             className="w-full"
             loading={loading}
-            disabled={!email || !password || !confirmPassword}
+            disabled={!email || !password || !confirmPassword || !privacyAccepted}
           >
             Create account →
           </Button>
-
-          <p className="text-[11px] text-base-muted text-center leading-relaxed">
-            By creating an account you accept our{' '}
-            <Link to="/privacy" className="text-pink-primary hover:underline">Privacy Policy</Link>.
-          </p>
         </form>
 
         <p className="text-sm text-base-muted text-center mt-6">
