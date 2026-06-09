@@ -7,10 +7,7 @@ from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
-from sqlalchemy import text
-
-from app.db.session import engine
-from app.models.base import Base
+from app.core.config import settings
 from app.routers import auth, generate, projects, tasks, export
 from app.routers.generate import limiter
 
@@ -23,12 +20,6 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
-    with engine.connect() as conn:
-        conn.execute(text(
-            "ALTER TABLE users ADD COLUMN IF NOT EXISTS groq_api_key VARCHAR(255)"
-        ))
-        conn.commit()
     logger.info("startup complete")
     yield
 
@@ -52,7 +43,7 @@ app.add_middleware(SlowAPIMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://structify.vercel.app"],
+    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

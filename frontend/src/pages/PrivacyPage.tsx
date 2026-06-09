@@ -24,8 +24,8 @@ export default function PrivacyPage() {
             <p className="text-sm text-base-muted leading-relaxed">
               The data controller for Structify is the service operator. For any privacy-related
               requests, please contact us at:{' '}
-              <a href="mailto:privacy@structify.app" className="text-pink-primary hover:underline">
-                privacy@structify.app
+              <a href="mailto:deberardinismatteo02@gmail.com" className="text-pink-primary hover:underline">
+                deberardinismatteo02@gmail.com
               </a>
             </p>
           </section>
@@ -144,8 +144,8 @@ export default function PrivacyPage() {
             </ul>
             <p className="text-sm text-base-muted leading-relaxed mt-3">
               To exercise any of these rights, contact us at{' '}
-              <a href="mailto:privacy@structify.app" className="text-pink-primary hover:underline">
-                privacy@structify.app
+              <a href="mailto:deberardinismatteo02@gmail.com" className="text-pink-primary hover:underline">
+                deberardinismatteo02@gmail.com
               </a>
             </p>
           </section>
