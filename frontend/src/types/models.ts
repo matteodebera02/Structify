@@ -41,6 +41,7 @@ export interface Project {
   user_id: number
   title: string
   description: string
+  mode: OutputMode
   user_stories: UserStory[]
   tasks: Task[]
   created_at: string
