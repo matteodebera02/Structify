@@ -4,6 +4,8 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-18-61DAFB)](https://react.dev)
 
+Starting a new project means hours turning a vague idea into tickets. Most teams describe what they want to build in plain language — then manually translate that into user stories, tasks, and effort estimates. Structify does that translation automatically.
+
 > Describe the software or tech product you want to build. Structify uses AI to generate structured user stories and tasks — ready to export into your PM tools.
 >
 > **Designed for software and technology projects** — apps, APIs, modules, platforms, integrations. The AI detects the tech stack from your description and generates implementation-specific tasks.
@@ -29,6 +31,8 @@
 | **Tasks only** | Flat task list for smaller projects or personal work |
 
 ### Export formats
+
+Export formats are chosen to match real PM workflows — not generic formats that require reformatting before use.
 
 | Format | Works with |
 |--------|-----------|
@@ -67,9 +71,9 @@ The system prompt instructs the model to detect the input language and generate 
 ### Per-task metadata
 
 Each generated task includes:
-- `effort`: S / M / L (S = 0.5–2h, M = 2–6h, L = 6–8h)
+- `effort`: S / M / L (S = 0.5–2h, M = 2–6h, L = 6–8h) — sizing is inferred from task scope: S for isolated changes (a single endpoint, a UI component), M for features spanning multiple layers, L for cross-cutting concerns or complex integrations
 - `effort_hours`: `{ min, max }` numeric range
-- `confidence`: 0.0–1.0 score (tasks < 0.5 without a warning are flagged in critique)
+- `confidence`: 0.0–1.0 score reflecting how much ambiguity the model detected while scoping the task
 - `assumptions`: list of assumptions made to scope the task
 
 ---
@@ -85,7 +89,7 @@ Each generated task includes:
 | Auth | JWT (9-hour access tokens) + Bcrypt |
 | Rate limiting | SlowAPI — 3 generations / hour per user |
 | Email | Resend (forgot-password flow) |
-| Deploy | Docker Compose |
+| Deploy | Vercel (frontend) · Render (backend) · Neon (database) |
 
 ---
 
