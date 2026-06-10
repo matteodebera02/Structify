@@ -15,6 +15,7 @@ class Task(Base):
     description: Mapped[str] = mapped_column(Text, nullable=False)
     order: Mapped[int] = mapped_column(Integer, default=0)
     effort: Mapped[str] = mapped_column(String(1), default="M")
+    confidence: Mapped[float] = mapped_column(default=0.8)
     completed: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 

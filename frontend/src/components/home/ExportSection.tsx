@@ -24,7 +24,7 @@ const FORMATS = [
     badge: 'Structify format',
     tagline: 'For developers & custom pipelines',
     description:
-      'The native Structify schema — project title, mode, user stories with nested tasks, effort hours, and metadata. Ready for custom scripts or API integrations.',
+      'The native Structify schema — project title, mode, user stories (or flat tasks for tasks-only projects), effort hours, and metadata. Ready for custom scripts or API integrations.',
     columns: ['project_title', 'mode', 'user_stories[]', 'tasks[]', 'effort_hours', 'exported_at'],
     tools: [
       { name: 'Custom scripts', color: '#6B7280' },
@@ -38,7 +38,7 @@ const FORMATS = [
     badge: '.md',
     tagline: 'Human-readable, anywhere',
     description:
-      'A clean .md file with H2 user stories, H3 task groups, and effort badges inline. Paste into any editor — Notion, GitHub, Obsidian — and it renders perfectly.',
+      'A clean .md file with H2 user stories and nested tasks, or a flat task list for tasks-only projects — effort badges inline. Paste into any editor — Notion, GitHub, Obsidian — and it renders perfectly.',
     columns: ['# Project', '## US — Title', '### Tasks', '- [ ] Task `M` `2–6h`'],
     tools: [
       { name: 'Notion',      color: '#000000' },

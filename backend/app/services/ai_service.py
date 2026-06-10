@@ -154,6 +154,18 @@ def parse_and_validate(raw: str, request_mode: str) -> dict:
         if not us.get("tasks"):
             us["tasks"] = tasks_by_us.get(us.get("id", ""), [])
 
+    # for tasks_only mode, flatten all nested tasks into root tasks[] and clear user_stories
+    if request_mode == "tasks_only":
+        flat_tasks = []
+        for us in data.get("user_stories") or []:
+            flat_tasks.extend(us.get("tasks") or [])
+        if flat_tasks:
+            for i, t in enumerate(flat_tasks):
+                t["order"] = i + 1
+                t["user_story_id"] = ""
+            data["tasks"] = flat_tasks
+        data["user_stories"] = []
+
     logger.info("parsed: %d stories, %d tasks",
                 len(data.get("user_stories") or []),
                 len(data.get("tasks") or []))

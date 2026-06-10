@@ -20,13 +20,13 @@ def _save_generated(project: Project, result: GenerateResponse,
     for us_data in result.user_stories:
         us = us_repo.create(project.id, us_data.title, us_data.description, us_data.order)
         for t in us_data.tasks:
-            task_repo.create(project.id, us.id, t.title, t.description, t.order, t.effort)
+            task_repo.create(project.id, us.id, t.title, t.description, t.order, t.effort, t.confidence)
             nested_task_ids.add(t.id)
 
     # only save tasks not already saved inside a US (handles tasks_only mode and orphans)
     orphan_tasks = [t for t in result.tasks if t.id not in nested_task_ids]
     for t in orphan_tasks:
-        task_repo.create(project.id, None, t.title, t.description, t.order, t.effort)
+        task_repo.create(project.id, None, t.title, t.description, t.order, t.effort, t.confidence)
 
     logger.info("saved project=%d stories=%d tasks=%d orphan_tasks=%d",
                 project.id, len(result.user_stories), len(nested_task_ids), len(orphan_tasks))

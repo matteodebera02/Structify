@@ -64,32 +64,32 @@ def to_json(project: Project) -> str:
             "order": us.order,
             "tasks": [
                 {
-                    "id": f"task_{t.order}",
+                    "id": f"task_{j}",
                     "user_story_id": us_id,
                     "title": t.title,
                     "description": t.description,
-                    "order": t.order,
+                    "order": j,
                     "effort": t.effort,
                     "effort_hours": EFFORT_HOURS.get(t.effort, {"min": 2, "max": 6}),
                     "completed": t.completed,
                 }
-                for t in sorted(us.tasks, key=lambda t: t.order)
+                for j, t in enumerate(sorted(us.tasks, key=lambda t: t.order), 1)
             ],
         })
 
     orphans = _orphan_tasks(project)
     tasks_list = [
         {
-            "id": f"task_{t.order}",
+            "id": f"task_{i}",
             "user_story_id": None,
             "title": t.title,
             "description": t.description,
-            "order": t.order,
+            "order": i,
             "effort": t.effort,
             "effort_hours": EFFORT_HOURS.get(t.effort, {"min": 2, "max": 6}),
             "completed": t.completed,
         }
-        for t in orphans
+        for i, t in enumerate(orphans, 1)
     ]
 
     data = {
@@ -139,7 +139,7 @@ def export_csv(project: Project) -> str:
                 "Effort": task.effort,
                 "Effort Hours Min": hours["min"],
                 "Effort Hours Max": hours["max"],
-                "Confidence": "",
+                "Confidence": task.confidence,
                 "Priority": EFFORT_PRIORITY.get(task.effort, "Medium"),
                 "Status": "Done" if task.completed else "To Do",
                 "Tags": f"effort-{task.effort}",

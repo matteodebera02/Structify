@@ -13,10 +13,11 @@ class TaskRepository:
 
     # method to create a task
     def create(self, project_id: int, user_story_id: int | None, title: str,
-               description: str, order: int, effort: str) -> Task:
+               description: str, order: int, effort: str, confidence: float = 0.8) -> Task:
         task = Task(
             project_id=project_id, user_story_id=user_story_id,
             title=title, description=description, order=order, effort=effort,
+            confidence=confidence,
         )
         self.db.add(task)
         self.db.commit()

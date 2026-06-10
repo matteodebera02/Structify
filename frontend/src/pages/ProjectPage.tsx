@@ -60,6 +60,10 @@ export default function ProjectPage() {
     }
   }, [project?.id])
 
+  useEffect(() => {
+    if (project?.mode) setFeatureMode(project.mode)
+  }, [project?.mode])
+
   const { exportMarkdown, exportJson, exportCsv } = useExport(projectId, project?.title ?? 'project')
 
   const completeTask = async (taskId: number) => {
@@ -395,20 +399,22 @@ export default function ProjectPage() {
                 </div>
               )}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div className="flex items-center gap-1 bg-base-surface border border-base-border rounded-md p-1 self-start">
-                  {(['us_and_tasks', 'tasks_only'] as OutputMode[]).map(m => (
-                    <button
-                      key={m}
-                      onClick={() => setFeatureMode(m)}
-                      className={cn(
-                        'text-xs px-3 py-1 rounded transition-colors',
-                        featureMode === m ? 'bg-pink-primary text-white' : 'text-base-muted hover:text-base-black'
-                      )}
-                    >
-                      {m === 'us_and_tasks' ? 'US + Tasks' : 'Tasks only'}
-                    </button>
-                  ))}
-                </div>
+                {project?.mode !== 'tasks_only' && (
+                  <div className="flex items-center gap-1 bg-base-surface border border-base-border rounded-md p-1 self-start">
+                    {(['us_and_tasks', 'tasks_only'] as OutputMode[]).map(m => (
+                      <button
+                        key={m}
+                        onClick={() => setFeatureMode(m)}
+                        className={cn(
+                          'text-xs px-3 py-1 rounded transition-colors',
+                          featureMode === m ? 'bg-pink-primary text-white' : 'text-base-muted hover:text-base-black'
+                        )}
+                      >
+                        {m === 'us_and_tasks' ? 'US + Tasks' : 'Tasks only'}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <div className="flex gap-2 sm:ml-auto">
                   <Button
                     size="sm"
