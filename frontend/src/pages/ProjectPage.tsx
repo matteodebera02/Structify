@@ -7,10 +7,12 @@ import { useProjects } from '@/hooks/useProjects'
 import { useExport } from '@/hooks/useExport'
 import { useProjectStore } from '@/store/projectStore'
 import { tasksApi } from '@/api/tasksApi'
+import { generateApi, type QuotaInfo } from '@/api/generateApi'
 import type { Task, UserStory } from '@/types/models'
 import { cn } from '@/utils/cn'
 import { formatDate } from '@/utils/formatters'
 import type { OutputMode } from '@/types/models'
+import axios from 'axios'
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>()
@@ -28,7 +30,13 @@ export default function ProjectPage() {
   const [featureMode, setFeatureMode] = useState<OutputMode>('us_and_tasks')
   const [savingFeature, setSavingFeature] = useState(false)
   const [featureError, setFeatureError] = useState<string | null>(null)
+  const [featureRateLimit, setFeatureRateLimit] = useState<string | null>(null)
+  const [quota, setQuota] = useState<QuotaInfo | null>(null)
   const newContentRef = useRef<HTMLDivElement>(null)
+
+  const fetchQuota = async () => {
+    try { setQuota(await generateApi.getQuota()) } catch { /* non-critical */ }
+  }
 
   const projectId = Number(id)
 
@@ -39,6 +47,7 @@ export default function ProjectPage() {
     fetchProject(projectId)
       .catch(() => setFetchError('Project not found'))
       .finally(() => setLoading(false))
+    fetchQuota()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId])
 
@@ -80,24 +89,36 @@ export default function ProjectPage() {
     if (!featureDesc.trim() || !project) return
     setSavingFeature(true)
     setFeatureError(null)
+    setFeatureRateLimit(null)
     const prevUSIds = new Set(project.user_stories.map(us => us.id))
     try {
       const updated = await addFeature(projectId, { description: featureDesc, mode: featureMode })
       setFeatureDesc('')
       setAddingFeature(false)
-      // Expand any newly added user stories
+      fetchQuota()
       const newUSIds = updated.user_stories
         .filter(us => !prevUSIds.has(us.id))
         .map(us => us.id)
       if (newUSIds.length > 0) {
         setExpandedUS(prev => new Set([...prev, ...newUSIds]))
       }
-      // Scroll to new content
       setTimeout(() => {
         newContentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }, 80)
-    } catch {
-      setFeatureError('Generation failed. Check your connection and try again.')
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status
+        const detail: string = err.response?.data?.detail ?? ''
+        if (status === 429 && detail.startsWith('RATE_LIMIT::')) {
+          setFeatureRateLimit(detail.replace('RATE_LIMIT::', ''))
+        } else if (status === 400 && detail.startsWith('NOT_A_PROJECT::')) {
+          setFeatureError(detail.replace('NOT_A_PROJECT::', ''))
+        } else {
+          setFeatureError(detail || 'Generation failed. Check your connection and try again.')
+        }
+      } else {
+        setFeatureError('Generation failed. Check your connection and try again.')
+      }
     } finally {
       setSavingFeature(false)
     }
@@ -330,10 +351,36 @@ export default function ProjectPage() {
             </div>
           ) : (
             <div className="p-5">
-              <p className="text-sm font-semibold text-base-black mb-0.5">Add a feature</p>
-              <p className="text-xs text-base-muted mb-4">
-                Describe what to add — the AI will generate new user stories and tasks and append them.
-              </p>
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <div>
+                  <p className="text-sm font-semibold text-base-black mb-0.5">Add a feature</p>
+                  <p className="text-xs text-base-muted">
+                    Describe what to add — the AI will generate new user stories and tasks and append them.
+                  </p>
+                </div>
+                {quota && !quota.own_key && quota.remaining !== null && (
+                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full border flex-shrink-0 ${
+                    quota.remaining === 0
+                      ? 'bg-red-50 border-red-200 text-red-600'
+                      : quota.remaining === 1
+                      ? 'bg-amber-50 border-amber-200 text-amber-700'
+                      : 'bg-base-surface border-base-border text-base-muted'
+                  }`}>
+                    {quota.remaining} of {quota.limit} generations left
+                  </span>
+                )}
+                {quota?.own_key && (
+                  <span className="text-xs font-medium px-2.5 py-1 rounded-full border bg-green-50 border-green-200 text-green-700 flex-shrink-0">
+                    Unlimited — own API key
+                  </span>
+                )}
+              </div>
+              {featureRateLimit && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 mb-3">
+                  <p className="text-xs font-medium text-amber-800">Rate limit reached — try again in {featureRateLimit}.</p>
+                  <p className="text-xs text-amber-700 mt-0.5">Add your own Groq API key in settings for unlimited generations.</p>
+                </div>
+              )}
               <textarea
                 value={featureDesc}
                 onChange={e => setFeatureDesc(e.target.value)}
@@ -366,13 +413,13 @@ export default function ProjectPage() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => { setAddingFeature(false); setFeatureDesc(''); setFeatureError(null) }}
+                    onClick={() => { setAddingFeature(false); setFeatureDesc(''); setFeatureError(null); setFeatureRateLimit(null) }}
                   >
                     Cancel
                   </Button>
                   <Button
                     size="sm"
-                    disabled={!featureDesc.trim()}
+                    disabled={!featureDesc.trim() || quota?.remaining === 0}
                     onClick={handleAddFeature}
                   >
                     Generate & add →
