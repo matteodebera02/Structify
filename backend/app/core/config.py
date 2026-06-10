@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 540
     GROQ_API_KEY: str = ""
     RESEND_API_KEY: str = ""
+    FROM_EMAIL: str = "onboarding@resend.dev"
     FRONTEND_URL: str = "http://localhost:5173"
 
 # Class to load environment variables

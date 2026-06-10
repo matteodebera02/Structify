@@ -15,7 +15,7 @@ def send_reset_email(to_email: str, token: str) -> None:
 
     try:
         resend.Emails.send({
-            "from": "Structify <onboarding@resend.dev>",
+            "from": f"Structify <{settings.FROM_EMAIL}>",
             "to": [to_email],
             "subject": "Reset your Structify password",
             "html": f"""
