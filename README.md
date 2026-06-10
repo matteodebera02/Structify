@@ -1,8 +1,14 @@
 # Structify — From idea to project plan, in seconds.
 
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://www.gettingstructify.com)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB)](https://react.dev)
+
 > Describe the software or tech product you want to build. Structify uses AI to generate structured user stories and tasks — ready to export into your PM tools.
 >
 > **Designed for software and technology projects** — apps, APIs, modules, platforms, integrations. The AI detects the tech stack from your description and generates implementation-specific tasks.
+>
+> **Live at [www.gettingstructify.com](https://www.gettingstructify.com)**
 
 **Stack:** React 18 · FastAPI · PostgreSQL · Groq (openai/gpt-oss-120b)
 
