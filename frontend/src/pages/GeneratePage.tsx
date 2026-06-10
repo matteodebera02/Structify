@@ -75,7 +75,7 @@ export default function GeneratePage() {
 
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-start justify-between gap-4 mb-2">
+          <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
             <p className="text-xs font-semibold text-pink-primary uppercase tracking-widest">
               New project
             </p>

@@ -355,7 +355,7 @@ export default function ProjectPage() {
             </div>
           ) : (
             <div className="p-5">
-              <div className="flex items-start justify-between gap-4 mb-3">
+              <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
                 <div>
                   <p className="text-sm font-semibold text-base-black mb-0.5">Add a feature</p>
                   <p className="text-xs text-base-muted">
