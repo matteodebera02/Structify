@@ -1,5 +1,13 @@
 # Structify — From idea to project plan, in seconds.
 
+Writing user stories manually is slow, inconsistent, and always 
+ends up in a whiteboard session that nobody documents properly.
+
+Structify takes a plain-text description of what you're building 
+and returns a full agile breakdown — user stories with acceptance 
+criteria, tasks with effort sizing, ready to export into Linear, 
+Notion, Jira, or whatever you use.
+
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://www.gettingstructify.com)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-18-61DAFB)](https://react.dev)
