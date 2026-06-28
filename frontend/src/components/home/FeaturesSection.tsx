@@ -3,48 +3,40 @@ import { cn } from '@/utils/cn'
 
 const FEATURES = [
   {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-      </svg>
-    ),
-    title: 'AI-generated in seconds',
+    title: 'Plain language in',
+    tag: 'AI',
     description:
-      'Describe your project in plain language and get a complete, structured plan instantly — no templates, no manual effort.',
+      "Describe your project as you'd explain it to a teammate. No templates, no structured prompts, no learning curve. Structify figures out the rest.",
   },
   {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
-        <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
-      </svg>
-    ),
+    title: 'Structured plan out',
+    tag: 'instant',
+    description:
+      "User stories with acceptance criteria, tasks with effort estimates, priorities set. A plan a real team can execute — generated in under 10 seconds.",
+  },
+  {
     title: 'Two output modes',
+    tag: 'flexible',
     description:
-      'Generate full User Stories + Tasks for agile teams, or just a flat task list if you prefer a simpler workflow.',
+      "US + Tasks for agile teams tracking epics and sprints. Tasks only for solo devs or projects that don't need the story layer. Switch any time, re-generate instantly.",
   },
   {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-        <polyline points="7 10 12 15 17 10" />
-        <line x1="12" y1="15" x2="12" y2="3" />
-      </svg>
-    ),
-    title: 'Export to any tool',
+    title: 'Export to your stack',
+    tag: 'portable',
     description:
-      'Download as CSV for Linear, Notion or Asana — as Markdown for GitHub and Obsidian — or as JSON for custom pipelines. One click, zero reformatting.',
+      "CSV maps directly to Linear, Jira, Notion, Asana. Markdown renders in GitHub, Obsidian, Confluence. JSON for custom pipelines. One click — no reformatting.",
   },
   {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        <polyline points="9 22 9 12 15 12 15 22" />
-      </svg>
-    ),
-    title: 'Personal dashboard',
+    title: 'Your own Groq key',
+    tag: 'unlimited',
     description:
-      'All your projects in one place. Track progress, iterate on structure, and manage tasks directly from your dashboard.',
+      "Add a free Groq API key in Settings and get unlimited generations. No quota, no wait times, no data leaving through Structify's infrastructure.",
+  },
+  {
+    title: 'Full project dashboard',
+    tag: 'persistent',
+    description:
+      "Every project saved. Re-generate, re-export, or pick up where you left off. Your planning history in one place — not scattered across chat sessions.",
   },
 ]
 
@@ -55,28 +47,35 @@ export default function FeaturesSection() {
     <section className="bg-white py-24 px-6 border-t border-base-border">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-xs font-semibold text-pink-primary uppercase tracking-widest mb-3">Features</p>
+          <p className="text-xs font-semibold text-pink-primary uppercase tracking-widest mb-3">
+            Features
+          </p>
           <h2 className="text-3xl lg:text-4xl font-bold text-base-black tracking-tight">
-            Everything you need to plan better.
+            Everything included.
           </h2>
         </div>
 
-        <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div
+          ref={ref}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-base-border border border-base-border rounded-2xl overflow-hidden"
+        >
           {FEATURES.map((f, i) => (
             <div
               key={f.title}
               className={cn(
-                'bg-base-surface border border-base-border rounded-2xl p-6',
-                'hover:border-pink-primary/30 hover:-translate-y-1 hover:shadow-md',
-                'transition-all duration-200',
+                'bg-white p-7 flex flex-col gap-3',
                 inView ? 'animate-fade-in-up' : 'opacity-0'
               )}
-              style={inView ? { animationDelay: `${i * 80}ms` } : undefined}
+              style={inView ? { animationDelay: `${i * 60}ms` } : undefined}
             >
-              <div className="w-10 h-10 rounded-xl bg-pink-soft flex items-center justify-center text-pink-primary mb-4">
-                {f.icon}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-mono text-sm font-semibold text-base-black leading-snug">
+                  {f.title}
+                </span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-soft text-pink-dark font-semibold flex-shrink-0">
+                  {f.tag}
+                </span>
               </div>
-              <h3 className="text-sm font-semibold text-base-black mb-2">{f.title}</h3>
               <p className="text-sm text-base-muted leading-relaxed">{f.description}</p>
             </div>
           ))}

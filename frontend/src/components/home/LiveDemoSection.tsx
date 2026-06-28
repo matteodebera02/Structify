@@ -48,15 +48,17 @@ export default function LiveDemoSection() {
   }
 
   return (
-    <section id="demo" className="bg-base-surface py-24 px-6">
+    <section id="demo" className="bg-warm-surface py-24 px-6">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-xs font-semibold text-pink-primary uppercase tracking-widest mb-3">Live demo</p>
+          <p className="text-xs font-semibold text-pink-primary uppercase tracking-widest mb-3">
+            Live demo
+          </p>
           <h2 className="text-3xl lg:text-4xl font-bold text-base-black tracking-tight mb-4">
-            Try it yourself.
+            Your turn.
           </h2>
           <p className="text-base text-base-muted mb-4">
-            Describe any project and see Structify generate the structure in seconds.
+            Type what you're building. Structify breaks it down into user stories and tasks in seconds.
           </p>
           <p className="text-xs text-base-muted/70">
             ⚡ Free shared quota included —{' '}
@@ -146,4 +148,3 @@ export default function LiveDemoSection() {
     </section>
   )
 }
-

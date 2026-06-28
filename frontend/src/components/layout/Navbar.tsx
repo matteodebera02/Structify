@@ -1,11 +1,20 @@
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import { cn } from '@/utils/cn'
 import Button from '@/components/ui/Button'
 import logo from '@/img/logo-whith-text.png'
 
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuthStore()
   const navigate = useNavigate()
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleLogout = () => {
     logout()
@@ -13,7 +22,14 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="border-b border-base-border bg-white px-4 sm:px-6 h-14 flex items-center justify-between">
+    <nav
+      className={cn(
+        'sticky top-0 z-50 px-4 sm:px-6 h-14 flex items-center justify-between transition-all duration-200',
+        scrolled
+          ? 'bg-white/95 backdrop-blur-sm border-b border-base-border shadow-sm'
+          : 'bg-white border-b border-base-border'
+      )}
+    >
       <Link to="/" className="flex items-center">
         <img
           src={logo}

@@ -18,6 +18,13 @@ export default {
           border:   '#E8E8E8',
           surface:  '#F5F5F5',
         },
+        warm: {
+          white:    '#F6F5F1',
+          surface:  '#EDECEA',
+          ink:      '#111010',
+          terminal: '#141210',
+          muted:    '#8C8C87',
+        },
       },
       fontFamily: {
         sans: ['Geist', 'Inter', 'system-ui', 'sans-serif'],

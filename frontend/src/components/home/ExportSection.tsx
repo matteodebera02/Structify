@@ -10,13 +10,13 @@ const FORMATS = [
       'One structured CSV that maps directly to Linear, Notion databases, ClickUp, Asana and more. Every tool has a CSV importer — just drag and drop.',
     columns: ['Name', 'Description', 'Type', 'User Story', 'Effort', 'Priority', 'Status'],
     tools: [
-      { name: 'Linear',        color: '#5E6AD2' },
-      { name: 'Notion',        color: '#000000' },
-      { name: 'ClickUp',       color: '#7B68EE' },
-      { name: 'Asana',         color: '#F06A6A' },
-      { name: 'Jira',          color: '#0052CC' },
-      { name: 'Google Sheets', color: '#34A853' },
-      { name: 'Trello',        color: '#0079BF' },
+      { name: 'Linear',        initial: 'Li', color: '#5E6AD2' },
+      { name: 'Notion',        initial: 'No', color: '#000000' },
+      { name: 'ClickUp',       initial: 'Cu', color: '#7B68EE' },
+      { name: 'Asana',         initial: 'As', color: '#F06A6A' },
+      { name: 'Jira',          initial: 'Ji', color: '#0052CC' },
+      { name: 'Google Sheets', initial: 'Gs', color: '#34A853' },
+      { name: 'Trello',        initial: 'Tr', color: '#0079BF' },
     ],
   },
   {
@@ -24,13 +24,13 @@ const FORMATS = [
     badge: 'Structify format',
     tagline: 'For developers & custom pipelines',
     description:
-      'The native Structify schema — project title, mode, user stories (or flat tasks for tasks-only projects), effort hours, and metadata. Ready for custom scripts or API integrations.',
+      'The native Structify schema — project title, mode, user stories (or flat tasks), effort hours, and metadata. Ready for custom scripts or API integrations.',
     columns: ['project_title', 'mode', 'user_stories[]', 'tasks[]', 'effort_hours', 'exported_at'],
     tools: [
-      { name: 'Custom scripts', color: '#6B7280' },
-      { name: 'REST APIs',      color: '#6B7280' },
-      { name: 'n8n / Zapier',   color: '#EA4B22' },
-      { name: 'GitHub Actions', color: '#181717' },
+      { name: 'Custom scripts', initial: 'Cs', color: '#6B7280' },
+      { name: 'REST APIs',      initial: 'Ra', color: '#6B7280' },
+      { name: 'n8n / Zapier',   initial: 'n8', color: '#EA4B22' },
+      { name: 'GitHub Actions', initial: 'Gh', color: '#181717' },
     ],
   },
   {
@@ -38,14 +38,14 @@ const FORMATS = [
     badge: '.md',
     tagline: 'Human-readable, anywhere',
     description:
-      'A clean .md file with H2 user stories and nested tasks, or a flat task list for tasks-only projects — effort badges inline. Paste into any editor — Notion, GitHub, Obsidian — and it renders perfectly.',
+      'A clean .md file with H2 user stories and nested tasks — effort badges inline. Paste into any editor and it renders perfectly.',
     columns: ['# Project', '## US — Title', '### Tasks', '- [ ] Task `M` `2–6h`'],
     tools: [
-      { name: 'Notion',      color: '#000000' },
-      { name: 'GitHub',      color: '#181717' },
-      { name: 'Obsidian',    color: '#7C3AED' },
-      { name: 'Confluence',  color: '#0052CC' },
-      { name: 'Logseq',      color: '#48CAE4' },
+      { name: 'Notion',      initial: 'No', color: '#000000' },
+      { name: 'GitHub',      initial: 'Gh', color: '#181717' },
+      { name: 'Obsidian',    initial: 'Ob', color: '#7C3AED' },
+      { name: 'Confluence',  initial: 'Co', color: '#0052CC' },
+      { name: 'Logseq',      initial: 'Ls', color: '#48CAE4' },
     ],
   },
 ]
@@ -69,14 +69,14 @@ export default function ExportSection() {
   const { ref, inView } = useInView()
 
   return (
-    <section className="bg-[#F9F9F9] py-24 px-6 border-t border-base-border">
+    <section className="bg-warm-white py-24 px-6 border-t border-base-border">
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
         <div className="text-center mb-16">
           <p className="text-xs font-semibold text-pink-primary uppercase tracking-widest mb-3">Export</p>
           <h2 className="text-3xl lg:text-4xl font-bold text-base-black tracking-tight mb-4">
-            Three formats. Every tool.
+            One click. Lands wherever<br className="hidden sm:block" /> your team is.
           </h2>
           <p className="text-base text-base-muted max-w-xl mx-auto leading-relaxed">
             Generate your structure in Structify, then bring it wherever your team lives.
@@ -97,7 +97,7 @@ export default function ExportSection() {
               style={inView ? { animationDelay: `${i * 100}ms` } : undefined}
             >
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-xl font-bold text-base-black tracking-tight">{fmt.label}</span>
+                <span className="text-xl font-bold text-base-black tracking-tight font-mono">{fmt.label}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-pink-soft text-pink-dark font-semibold">
                   {fmt.badge}
                 </span>
@@ -106,7 +106,7 @@ export default function ExportSection() {
               <p className="text-xs font-semibold text-base-black mb-1">{fmt.tagline}</p>
               <p className="text-sm text-base-muted leading-relaxed mb-5">{fmt.description}</p>
 
-              <div className="bg-[#F4F4F4] rounded-lg px-3 py-2.5 mb-5 font-mono text-[10px] text-base-muted space-y-0.5">
+              <div className="bg-warm-surface rounded-lg px-3 py-2.5 mb-5 font-mono text-[10px] text-base-muted space-y-0.5">
                 {fmt.columns.map((col) => (
                   <div key={col}>{col}</div>
                 ))}
@@ -122,7 +122,12 @@ export default function ExportSection() {
                       key={tool.name}
                       className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-md bg-base-surface border border-base-border text-base-black font-medium"
                     >
-                      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: tool.color }} />
+                      <span
+                        className="font-mono text-[9px] font-bold flex-shrink-0"
+                        style={{ color: tool.color }}
+                      >
+                        {tool.initial}
+                      </span>
                       {tool.name}
                     </span>
                   ))}
