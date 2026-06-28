@@ -1,10 +1,11 @@
 # Structify — From idea to project plan, in seconds.
 
+Starting a new project means hours spent turning a vague idea into structured tickets — manually writing user stories, breaking them into tasks, and estimating effort. Structify automates that translation: describe what you're building in plain language, and it returns a full agile breakdown ready to export into Linear, Notion, Jira, or whatever you use.
+
+
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://www.gettingstructify.com)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-18-61DAFB)](https://react.dev)
-
-Starting a new project means hours turning a vague idea into tickets. Most teams describe what they want to build in plain language — then manually translate that into user stories, tasks, and effort estimates. Structify does that translation automatically.
 
 > Describe the software or tech product you want to build. Structify uses AI to generate structured user stories and tasks — ready to export into your PM tools.
 >
