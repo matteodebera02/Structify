@@ -19,7 +19,7 @@ export default function WordCycler() {
 
   return (
     <span
-      className="font-mono text-pink-primary transition-opacity duration-200"
+      className="inline-block w-[7ch] font-mono text-pink-primary transition-opacity duration-200"
       style={{ opacity: fading ? 0 : 1 }}
     >
       {WORDS[index]}

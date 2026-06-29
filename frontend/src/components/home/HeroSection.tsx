@@ -42,7 +42,7 @@ export default function HeroSection() {
               className="text-5xl lg:text-[3.75rem] font-bold text-white leading-[1.1] tracking-tight mb-6 animate-fade-in-up"
               style={{ animationDelay: '80ms' }}
             >
-              Build your <WordCycler />.<br />
+              Build your <WordCycler /><br />
               Get a project plan<br />
               in seconds.
             </h1>
