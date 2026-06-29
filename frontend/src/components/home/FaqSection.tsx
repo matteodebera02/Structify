@@ -12,7 +12,7 @@ const FAQS = [
   },
   {
     q: 'How good is the AI output?',
-    a: "Structify uses llama-3.3-70b via Groq — one of the strongest open models available. Most users find the output usable as-is. Complex projects benefit from a sentence or two of extra context.",
+    a: "Structify runs on a powerful AI model via Groq's inference API. Most users find the output usable as-is. Complex projects benefit from a sentence or two of extra context — stack, team size, rough scope.",
   },
   {
     q: "US + Tasks vs Tasks only — what's the difference?",
