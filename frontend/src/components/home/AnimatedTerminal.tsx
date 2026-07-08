@@ -76,7 +76,7 @@ export default function AnimatedTerminal() {
   }, [])
 
   return (
-    <div className="bg-warm-terminal border border-white/8 rounded-2xl p-5 shadow-2xl w-[340px] select-none overflow-hidden">
+    <div className="bg-warm-terminal border border-white/8 rounded-2xl p-5 shadow-2xl w-[340px] max-w-full h-[380px] select-none overflow-hidden">
       {/* Window chrome */}
       <div className="flex items-center gap-1.5 mb-4">
         <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
